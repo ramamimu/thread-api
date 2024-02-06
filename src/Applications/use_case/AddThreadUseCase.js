@@ -8,17 +8,19 @@ class AddThreadUseCase {
 
   async execute(useCasePayload, useCaseCredentials) {
     const { id: credentialId } = useCaseCredentials;
-    this._userRepository.verifyAvailableUserId(credentialId);
+    await this._userRepository.verifyAvailableUserId(credentialId);
     const registerThread = new RegisterThread(useCasePayload);
     const registeredThread = await this._threadRepository.addThread(
       registerThread,
       credentialId
     );
+
     const addedThread = {
       id: registeredThread.id,
       title: registeredThread.title,
       owner: registeredThread.owner,
     };
+
     return addedThread;
   }
 }
