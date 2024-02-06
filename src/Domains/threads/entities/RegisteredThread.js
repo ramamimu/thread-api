@@ -19,7 +19,7 @@ class RegisteredThread {
       typeof title !== "string" ||
       typeof body !== "string" ||
       typeof owner !== "string" ||
-      typeof date !== "string"
+      typeof date !== "object"
     ) {
       throw new Error(
         "REGISTERED_THREAD_ENTITY.NOT_MEET_DATA_TYPE_SPESIFICATION"

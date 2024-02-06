@@ -1,7 +1,5 @@
-const InvariantError = require("../../Commons/exceptions/InvariantError");
 const ThreadRepository = require("../../Domains/threads/ThreadRepository");
-// const RegisteredUser = require('../../Domains/users/entities/RegisteredUser');
-// const UserRepository = require('../../Domains/users/UserRepository');
+const RegisteredThread = require("../../Domains/threads/entities/RegisteredThread");
 
 class ThreadRepositoryPostgress extends ThreadRepository {
   constructor(pool, idGenerator) {
@@ -15,16 +13,13 @@ class ThreadRepositoryPostgress extends ThreadRepository {
     const id = `thread-${this._idGenerator()}`;
 
     const query = {
-      text: "INSERT INTO threads VALUES($1, $2, $3, $4) RETURNING id",
+      text: "INSERT INTO threads VALUES($1, $2, $3, $4) RETURNING *",
       values: [id, title, body, ownerId],
     };
 
-    const result = this._pool.query(query);
-    if (!result.rows.length) {
-      throw new Error("Thread gagal ditambahkan");
-    }
-
-    // return registeredThread ya
+    // before insert to thread table, make sure in the top of layer has checked owner availability
+    const result = await this._pool.query(query);
+    return new RegisteredThread({ ...result.rows[0] });
   }
 }
 

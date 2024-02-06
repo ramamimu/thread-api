@@ -17,7 +17,7 @@ describe("RegisteredThread entity", () => {
       title: 25,
       body: "body",
       owner: "owner",
-      date: "date",
+      date: {},
     };
 
     expect(() => new RegisteredThread(payload)).toThrowError(
@@ -30,7 +30,7 @@ describe("RegisteredThread entity", () => {
       title: "a-title",
       body: "body",
       owner: "owner",
-      date: "date",
+      date: {},
     };
 
     const { id, title, body, owner, date } = new RegisteredThread(payload);
