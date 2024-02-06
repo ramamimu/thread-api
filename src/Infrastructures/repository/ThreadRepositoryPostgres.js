@@ -17,7 +17,7 @@ class ThreadRepositoryPostgress extends ThreadRepository {
       values: [id, title, body, ownerId],
     };
 
-    // before insert to thread table, make sure in the top of layer has checked owner availability
+    // before insert to thread table, make sure on the top of layer has checked owner existance
     const result = await this._pool.query(query);
     return new RegisteredThread({ ...result.rows[0] });
   }
