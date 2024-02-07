@@ -10,12 +10,12 @@ class AddCommentByThreadIdUseCase {
     const { id: credentialId } = useCaseCredentials;
     const { id: threadId } = useCaseParam;
     const { content } = useCasePayload;
-    await this._userRepository.verifyAvailableUserId(credentialId);
     const registerComment = new RegisterComment({
       owner: credentialId,
       threadId,
       content,
     });
+    await this._userRepository.verifyAvailableUserId(credentialId);
     await this._threadRepository.verifyAvailableThreadId(
       registerComment.threadId
     );

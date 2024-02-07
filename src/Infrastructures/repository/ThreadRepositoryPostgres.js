@@ -49,6 +49,30 @@ class ThreadRepositoryPostgress extends ThreadRepository {
     const result = await this._pool.query(query);
     return new RegisteredComment({ ...result.rows[0] });
   }
+
+  async verifyAvailableCommentId(deleteComment) {
+    // make sure in the top of layer, add validation to check availability threadId and userId first
+    const { threadId, commentId, ownerId } = deleteComment;
+    const query = {
+      text: "SELECT * FROM comments WHERE id = $1 AND thread_id = $2 AND owner = $3",
+      values: [commentId, threadId, ownerId],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      throw NotFoundError("komentar tidak ada");
+    }
+  }
+
+  async deleteCommentByCommentId(deleteComment) {
+    const { threadId, commentId, ownerId } = deleteComment;
+    const query = {
+      text: "UPDATE comments SET is_delete = TRUE, content ='**komentar telah dihapus**' WHERE thread_id = $1 AND id = $2 AND owner = $3",
+      values: [threadId, commentId, ownerId],
+    };
+
+    await this._pool.query(query);
+  }
 }
 
 module.exports = ThreadRepositoryPostgress;
