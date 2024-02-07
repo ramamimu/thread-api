@@ -4,6 +4,7 @@ const Jwt = require("@hapi/jwt");
 const ThreadTableTestHelper = require("../../../../tests/ThreadsTableTestHelper");
 const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
 const AuthenticationsTableTestHelper = require("../../../../tests/AuthenticationsTableTestHelper");
+const CommentsTableHelper = require("../../../../tests/CommentsTableHelper");
 
 const container = require("../../container");
 const createServer = require("../createServer");
@@ -18,6 +19,7 @@ describe("/threads endpoint", () => {
     await ThreadTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
     await AuthenticationsTableTestHelper.cleanTable();
+    await CommentsTableHelper.cleanTable();
   });
 
   describe("when POST /threads", () => {
@@ -145,6 +147,131 @@ describe("/threads endpoint", () => {
       expect(response.statusCode).toEqual(401);
       expect(responseJson.error).toEqual("Unauthorized");
       expect(responseJson.message).toBeDefined();
+    });
+  });
+
+  describe("when POST /threads/{id}/comments", () => {
+    it("should response 201 and persisted threads", async () => {
+      // arrange
+      const requestPayload = {
+        content: "a-content",
+      };
+
+      const credentialPayload = { id: "user-comment-123" };
+      const threadPayload = { id: "thread-123", ownerId: credentialPayload.id };
+
+      await ThreadTableTestHelper.addThread(threadPayload);
+
+      // action
+      const server = await createServer(container);
+      const response = await server.inject({
+        method: "POST",
+        url: `/threads/${threadPayload.id}/comments`,
+        payload: requestPayload,
+        auth: {
+          strategy: "jwt",
+          credentials: {
+            id: credentialPayload.id,
+          },
+        },
+      });
+
+      const responseJSON = JSON.parse(response.payload);
+
+      // assert
+      expect(response.statusCode).toEqual(201);
+      expect(responseJSON.status).toEqual("success");
+      expect(responseJSON.data.addedComment).toBeDefined();
+    });
+    it("should response 400 when request payload not contain needed property", async () => {
+      // arrange
+      const requestPayload = {
+        contenting: "a-content",
+      };
+
+      const credentialPayload = { id: "user-comment-123" };
+      const threadPayload = { id: "thread-123", ownerId: credentialPayload.id };
+
+      await ThreadTableTestHelper.addThread(threadPayload);
+
+      // action
+      const server = await createServer(container);
+      const response = await server.inject({
+        method: "POST",
+        url: `/threads/${threadPayload.id}/comments`,
+        payload: requestPayload,
+        auth: {
+          strategy: "jwt",
+          credentials: {
+            id: credentialPayload.id,
+          },
+        },
+      });
+
+      const responseJSON = JSON.parse(response.payload);
+
+      // assert
+      expect(response.statusCode).toEqual(400);
+      expect(responseJSON.status).toEqual("fail");
+      expect(responseJSON.message).toBeDefined();
+    });
+    it("should response 400 when request payload not meet data type spesification", async () => {
+      // arrange
+      const requestPayload = {
+        content: 234,
+      };
+
+      const credentialPayload = { id: "user-comment-123" };
+      const threadPayload = { id: "thread-123", ownerId: credentialPayload.id };
+
+      await ThreadTableTestHelper.addThread(threadPayload);
+
+      // action
+      const server = await createServer(container);
+      const response = await server.inject({
+        method: "POST",
+        url: `/threads/${threadPayload.id}/comments`,
+        payload: requestPayload,
+        auth: {
+          strategy: "jwt",
+          credentials: {
+            id: credentialPayload.id,
+          },
+        },
+      });
+
+      const responseJSON = JSON.parse(response.payload);
+
+      // assert
+      expect(response.statusCode).toEqual(400);
+      expect(responseJSON.status).toEqual("fail");
+      expect(responseJSON.message).toBeDefined();
+    });
+    it("should response 401 when user request not authorized", async () => {
+      // arrange
+      const requestPayload = {
+        content: "a-content",
+      };
+
+      const credentialPayload = { id: "user-comment-123" };
+      const threadPayload = { id: "thread-123", ownerId: credentialPayload.id };
+
+      await ThreadTableTestHelper.addThread(threadPayload);
+
+      // action
+      const server = await createServer(container);
+      const response = await server.inject({
+        method: "POST",
+        url: `/threads/${threadPayload.id}/comments`,
+        payload: requestPayload,
+      });
+
+      const responseJSON = JSON.parse(response.payload);
+
+      // assert
+      expect(response.statusCode).toEqual(401);
+      expect(responseJSON.error).toEqual("Unauthorized");
+      expect(responseJSON.message).toBeDefined();
     });
   });
 });
