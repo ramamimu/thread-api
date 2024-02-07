@@ -42,7 +42,7 @@ class ThreadRepositoryPostgress extends ThreadRepository {
     const id = `comment-${this._idGenerator()}`;
 
     const query = {
-      text: "INSERT INTO comments VALUES($1, $2, $3) RETURNING *",
+      text: "INSERT INTO comments VALUES($1, $2, $3, $4) RETURNING *",
       values: [id, threadId, content, owner],
     };
 

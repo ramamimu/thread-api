@@ -17,7 +17,14 @@ class RegisteredCommentEntity {
   }
 
   _verifyPayload(id, content, owner, date, isDelete, threadId) {
-    if (!id || !content || !owner || !date || !isDelete || !threadId) {
+    if (
+      !id ||
+      !content ||
+      !owner ||
+      !date ||
+      isDelete === undefined ||
+      !threadId
+    ) {
       throw new Error("REGISTERED_COMMENT_ENTITY.NOT_CONTAIN_NEEDED_PROPERTY");
     }
 
