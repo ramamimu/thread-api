@@ -3,6 +3,7 @@ const RegisteredThread = require("../../Domains/threads/entities/RegisteredThrea
 const RegisteredComment = require("../../Domains/threads/entities/RegisteredCommentEntity");
 
 const NotFoundError = require("../../Commons/exceptions/NotFoundError");
+const AuthorizationError = require("../../Commons/exceptions/AuthorizationError");
 
 class ThreadRepositoryPostgress extends ThreadRepository {
   constructor(pool, idGenerator) {
@@ -50,24 +51,37 @@ class ThreadRepositoryPostgress extends ThreadRepository {
     return new RegisteredComment({ ...result.rows[0] });
   }
 
-  async verifyAvailableCommentId(deleteComment) {
+  async verifyAvailableCommentId(commentId) {
     // make sure in the top of layer, add validation to check availability threadId and userId first
-    const { threadId, commentId, ownerId } = deleteComment;
     const query = {
-      text: "SELECT * FROM comments WHERE id = $1 AND thread_id = $2 AND owner = $3",
-      values: [commentId, threadId, ownerId],
+      text: "SELECT * FROM comments WHERE id = $1",
+      values: [commentId],
     };
 
     const result = await this._pool.query(query);
     if (!result.rowCount) {
-      throw NotFoundError("komentar tidak ada");
+      throw new NotFoundError("komentar tidak ada");
+    }
+  }
+
+  async verifyCommentOwner({ commentId, ownerId }) {
+    const query = {
+      text: "SELECT * FROM comments WHERE id = $1 AND owner = $2",
+      values: [commentId, ownerId],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      throw new AuthorizationError(
+        "User tidak memiliki izin untuk menghapus komentar"
+      );
     }
   }
 
   async deleteCommentByCommentId(deleteComment) {
     const { threadId, commentId, ownerId } = deleteComment;
     const query = {
-      text: "UPDATE comments SET is_delete = TRUE, content ='**komentar telah dihapus**' WHERE thread_id = $1 AND id = $2 AND owner = $3",
+      text: "UPDATE comments SET is_delete = TRUE WHERE thread_id = $1 AND id = $2 AND owner = $3",
       values: [threadId, commentId, ownerId],
     };
 

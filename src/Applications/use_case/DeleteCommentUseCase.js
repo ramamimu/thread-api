@@ -16,7 +16,8 @@ class DeleteCommentUseCase {
     });
     await this._userRepository.verifyAvailableUserId(credentialId);
     await this._threadRepository.verifyAvailableThreadId(threadId);
-    await this._threadRepository.verifyAvailableComment(deleteCommentEntity);
+    await this._threadRepository.verifyAvailableCommentId(commentId);
+    await this._threadRepository.verifyCommentOwner(deleteCommentEntity);
     await this._threadRepository.deleteCommentByCommentId(deleteCommentEntity);
   }
 }

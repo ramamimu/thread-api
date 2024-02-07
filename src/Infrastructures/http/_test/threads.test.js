@@ -307,4 +307,99 @@ describe("/threads endpoint", () => {
       expect(responseJSON.message).toBeDefined();
     });
   });
+
+  describe("when DELETE /threads/{threadId}/comments/{commentId}", () => {
+    it("should response 200 with status success", async () => {
+      const threadId = "thread-comment-123";
+      const commentId = "comment-123";
+      const userId = "user-comment-123";
+
+      await CommentsTableHelper.addComments({
+        id: commentId,
+        ownerId: userId,
+        threadId: threadId,
+      });
+
+      const server = await createServer(container);
+      const response = await server.inject({
+        method: "DELETE",
+        url: `/threads/${threadId}/comments/${commentId}`,
+        auth: {
+          strategy: "jwt",
+          credentials: {
+            id: userId,
+          },
+        },
+      });
+
+      const responseJSON = JSON.parse(response.payload);
+
+      expect(response.statusCode).toEqual(200);
+      expect(responseJSON.status).toStrictEqual("success");
+    });
+    it("should response 403 when the deleter is not owner", async () => {
+      const threadId = "thread-comment-123";
+      const commentId = "comment-123";
+      const userId = "user-comment-123";
+
+      // user 1 (owner)
+      await CommentsTableHelper.addComments({
+        id: commentId,
+        ownerId: "another-owner",
+        threadId: threadId,
+      });
+
+      // user 2 (not owner and the deleter)
+      await UsersTableTestHelper.addUser({
+        id: userId,
+        username: "another-uname",
+      });
+
+      const server = await createServer(container);
+      const response = await server.inject({
+        method: "DELETE",
+        url: `/threads/${threadId}/comments/${commentId}`,
+        auth: {
+          strategy: "jwt",
+          credentials: {
+            id: userId,
+          },
+        },
+      });
+
+      const responseJSON = JSON.parse(response.payload);
+
+      expect(response.statusCode).toEqual(403);
+      expect(responseJSON.status).toStrictEqual("fail");
+      expect(responseJSON.message).toBeDefined();
+    });
+    it("should response 404 when thread or comment not valid", async () => {
+      const threadId = "thread-comment-123";
+      const commentId = "comment-123";
+      const userId = "user-comment-123";
+
+      await UsersTableTestHelper.addUser({
+        id: userId,
+        username: "another-uname",
+      });
+
+      const server = await createServer(container);
+      const response = await server.inject({
+        method: "DELETE",
+        url: `/threads/${threadId}/comments/${commentId}`,
+        auth: {
+          strategy: "jwt",
+          credentials: {
+            id: userId,
+          },
+        },
+      });
+
+      const responseJSON = JSON.parse(response.payload);
+
+      expect(response.statusCode).toEqual(404);
+      expect(responseJSON.status).toStrictEqual("fail");
+      expect(responseJSON.message).toBeDefined();
+    });
+  });
 });
