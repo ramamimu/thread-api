@@ -8,7 +8,7 @@ const ThreadRepositoryPostgres = require("../ThreadRepositoryPostgres");
 const RegisterThreads = require("../../../Domains/threads/entities/RegisterThreadEntity");
 const RegisterComment = require("../../../Domains/threads/entities/RegisterCommentEntity");
 
-const InvariantError = require("../../../Commons/exceptions/InvariantError");
+const NotFoundError = require("../../../Commons/exceptions/NotFoundError");
 
 describe("ThreadRepositoryPostgres", () => {
   afterEach(async () => {
@@ -47,19 +47,19 @@ describe("ThreadRepositoryPostgres", () => {
       const threadRepository = new ThreadRepositoryPostgres(pool, () => {});
       await expect(
         threadRepository.verifyAvailableThreadId("thread-123")
-      ).rejects.toThrow(InvariantError);
+      ).rejects.toThrow(NotFoundError);
     });
     it("should not throw error when thread id found", async () => {
       await ThreadsTableTestHelper.addThread({ id: "thread-available-123" });
       const threadRepository = new ThreadRepositoryPostgres(pool, () => {});
       await expect(
         threadRepository.verifyAvailableThreadId("thread-available-123")
-      ).resolves.not.toThrow(InvariantError);
+      ).resolves.not.toThrow(NotFoundError);
     });
     it("should persist add comment by thread Id", async () => {
       // arrange
       const payload = {
-        threadId: "thread-comment-123",
+        threadId: "test-available-123",
         ownerId: "user-comment-123",
         commentId: "comment-123",
         content: "content-123",

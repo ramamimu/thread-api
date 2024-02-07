@@ -2,7 +2,7 @@ const ThreadRepository = require("../../Domains/threads/ThreadRepository");
 const RegisteredThread = require("../../Domains/threads/entities/RegisteredThread");
 const RegisteredComment = require("../../Domains/threads/entities/RegisteredCommentEntity");
 
-const InvariantError = require("../../Commons/exceptions/InvariantError");
+const NotFoundError = require("../../Commons/exceptions/NotFoundError");
 
 class ThreadRepositoryPostgress extends ThreadRepository {
   constructor(pool, idGenerator) {
@@ -32,7 +32,7 @@ class ThreadRepositoryPostgress extends ThreadRepository {
     };
     const result = await this._pool.query(query);
     if (!result.rowCount) {
-      throw new InvariantError("Thread tidak ada");
+      throw new NotFoundError("Thread tidak ada");
     }
   }
 

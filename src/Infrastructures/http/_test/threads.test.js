@@ -273,5 +273,38 @@ describe("/threads endpoint", () => {
       expect(responseJSON.error).toEqual("Unauthorized");
       expect(responseJSON.message).toBeDefined();
     });
+    it("should response 404 when thread is nothing or not valid", async () => {
+      // arrange
+      const requestPayload = {
+        content: "a-content",
+      };
+
+      const credentialPayload = { id: "user-comment-123" };
+      const threadPayload = { id: "thread-123", ownerId: credentialPayload.id };
+
+      // assume that user been exist
+      await UsersTableTestHelper.addUser(credentialPayload);
+
+      // action
+      const server = await createServer(container);
+      const response = await server.inject({
+        method: "POST",
+        url: `/threads/${threadPayload.id}/comments`,
+        payload: requestPayload,
+        auth: {
+          strategy: "jwt",
+          credentials: {
+            id: credentialPayload.id,
+          },
+        },
+      });
+
+      const responseJSON = JSON.parse(response.payload);
+
+      // assert
+      expect(response.statusCode).toEqual(404);
+      expect(responseJSON.status).toEqual("fail");
+      expect(responseJSON.message).toBeDefined();
+    });
   });
 });
