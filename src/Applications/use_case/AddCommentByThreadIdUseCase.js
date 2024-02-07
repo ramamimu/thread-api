@@ -6,14 +6,17 @@ class AddCommentByThreadIdUseCase {
     this._userRepository = userRepository;
   }
 
-  async execute(useCasePayload, useCaseCredentials) {
+  async execute(useCasePayload, useCaseParam, useCaseCredentials) {
     const { id: credentialId } = useCaseCredentials;
-    await this._userRepository.verifyAvailableThreadId(credentialId);
+    const { id: threadId } = useCaseParam;
+    const { content } = useCasePayload;
+    await this._userRepository.verifyAvailableUserId(credentialId);
     const registerComment = new RegisterComment({
-      id: credentialId,
-      ...useCasePayload,
+      owner: credentialId,
+      threadId,
+      content,
     });
-    await this._threadRepository.verifyThreadExistance(
+    await this._threadRepository.verifyAvailableThreadId(
       registerComment.threadId
     );
     const RegisteredComment = await this._threadRepository.addCommentByThreadId(
