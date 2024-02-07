@@ -1,5 +1,8 @@
 const ThreadRepository = require("../../Domains/threads/ThreadRepository");
 const RegisteredThread = require("../../Domains/threads/entities/RegisteredThread");
+const RegisteredComment = require("../../Domains/threads/entities/RegisteredCommentEntity");
+
+const InvariantError = require("../../Commons/exceptions/InvariantError");
 
 class ThreadRepositoryPostgress extends ThreadRepository {
   constructor(pool, idGenerator) {
@@ -20,6 +23,31 @@ class ThreadRepositoryPostgress extends ThreadRepository {
     // before insert to thread table, make sure on the top of layer has checked owner existance
     const result = await this._pool.query(query);
     return new RegisteredThread({ ...result.rows[0] });
+  }
+
+  async verifyAvailableThreadId(threadId) {
+    const query = {
+      text: "SELECT * FROM threads WHERE id = $1",
+      values: [threadId],
+    };
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      throw new InvariantError("Thread tidak ada");
+    }
+  }
+
+  async addCommentByThreadId(registerComment) {
+    // before implement this query, make sure threadId is available in the top layer
+    const { content, threadId, owner } = registerComment;
+    const id = `comment-${this._idGenerator()}`;
+
+    const query = {
+      text: "INSERT INTO comments VALUES($1, $2, $3) RETURNING *",
+      values: [id, threadId, content, owner],
+    };
+
+    const result = await this._pool.query(query);
+    return new RegisteredComment({ ...result.rows[0] });
   }
 }
 
