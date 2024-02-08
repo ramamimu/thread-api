@@ -4,6 +4,7 @@ const RegisteredComment = require("../../../Domains/threads/entities/RegisteredC
 
 const ThreadRepository = require("../../../Infrastructures/repository/ThreadRepositoryPostgres");
 const UserRepository = require("../../../Infrastructures/repository/UserRepositoryPostgres");
+const CommentRepository = require("../../../Infrastructures/repository/CommentRepositoryPostgres");
 
 describe("AddCommentByThreadIdUseCase", () => {
   it("should orchestrating the add comment by thread id use case", async () => {
@@ -37,6 +38,7 @@ describe("AddCommentByThreadIdUseCase", () => {
     /**mocking */
     const mockUserRepository = new UserRepository();
     const mockThreadRepository = new ThreadRepository();
+    const mockCommentRepository = new CommentRepository();
 
     mockUserRepository.verifyAvailableUserId = jest
       .fn()
@@ -44,7 +46,7 @@ describe("AddCommentByThreadIdUseCase", () => {
     mockThreadRepository.verifyAvailableThreadId = jest
       .fn()
       .mockImplementation(() => Promise.resolve());
-    mockThreadRepository.addCommentByThreadId = jest
+    mockCommentRepository.addCommentByThreadId = jest
       .fn()
       .mockImplementation(() => Promise.resolve(mockRegisteredComment));
 
@@ -52,6 +54,7 @@ describe("AddCommentByThreadIdUseCase", () => {
     const addCommentByThreadIdUseCase = new AddCommentByThreadIdUseCase({
       threadRepository: mockThreadRepository,
       userRepository: mockUserRepository,
+      commentRepository: mockCommentRepository,
     });
 
     const registeredComment = await addCommentByThreadIdUseCase.execute(
@@ -68,7 +71,7 @@ describe("AddCommentByThreadIdUseCase", () => {
     expect(mockThreadRepository.verifyAvailableThreadId).toBeCalledWith(
       useCaseParam.id
     );
-    expect(mockThreadRepository.addCommentByThreadId).toBeCalledWith(
+    expect(mockCommentRepository.addCommentByThreadId).toBeCalledWith(
       mockRegisterComment
     );
   });

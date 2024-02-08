@@ -9,11 +9,11 @@ describe("ThreadRepository's abstract interface", () => {
     await expect(threadRepository.addThread({})).rejects.toThrowError(
       "THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED"
     );
+    await expect(
+      threadRepository.verifyAvailableThreadId("")
+    ).rejects.toThrowError("THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED");
     await expect(threadRepository.getDetailThreadById("")).rejects.toThrowError(
       "THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED"
     );
-    await expect(
-      threadRepository.addCommentByThreadId("")
-    ).rejects.toThrowError("THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   });
 });

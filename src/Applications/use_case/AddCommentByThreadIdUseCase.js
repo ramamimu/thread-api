@@ -1,9 +1,10 @@
 const RegisterComment = require("../../Domains/threads/entities/RegisterCommentEntity");
 
 class AddCommentByThreadIdUseCase {
-  constructor({ threadRepository, userRepository }) {
+  constructor({ threadRepository, userRepository, commentRepository }) {
     this._threadRepository = threadRepository;
     this._userRepository = userRepository;
+    this._commentRepository = commentRepository;
   }
 
   async execute(useCasePayload, useCaseParam, useCaseCredentials) {
@@ -19,9 +20,8 @@ class AddCommentByThreadIdUseCase {
     await this._threadRepository.verifyAvailableThreadId(
       registerComment.threadId
     );
-    const RegisteredComment = await this._threadRepository.addCommentByThreadId(
-      registerComment
-    );
+    const RegisteredComment =
+      await this._commentRepository.addCommentByThreadId(registerComment);
     return RegisteredComment;
   }
 }

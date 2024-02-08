@@ -2,6 +2,7 @@ const DeleteCommentUseCase = require("../DeleteCommentUseCase");
 
 const ThreadRepository = require("../../../Infrastructures/repository/ThreadRepositoryPostgres");
 const UserRepository = require("../../../Infrastructures/repository/UserRepositoryPostgres");
+const CommentRepository = require("../../../Infrastructures/repository/CommentRepositoryPostgres");
 
 const DeleteCommentEntity = require("../../../Domains/threads/entities/DeleteCommentEntity");
 
@@ -24,6 +25,7 @@ describe("DeleteCommentUseCass", () => {
 
     const mockThreadRepository = new ThreadRepository();
     const mockUserRepository = new UserRepository();
+    const mockCommentRepository = new CommentRepository();
 
     mockUserRepository.verifyAvailableUserId = jest
       .fn()
@@ -31,19 +33,20 @@ describe("DeleteCommentUseCass", () => {
     mockThreadRepository.verifyAvailableThreadId = jest
       .fn()
       .mockImplementation(() => Promise.resolve());
-    mockThreadRepository.verifyAvailableCommentId = jest
+    mockCommentRepository.verifyAvailableCommentId = jest
       .fn()
       .mockImplementation(() => Promise.resolve());
-    mockThreadRepository.verifyCommentOwner = jest
+    mockCommentRepository.verifyCommentOwner = jest
       .fn()
       .mockImplementation(() => Promise.resolve());
-    mockThreadRepository.deleteCommentByCommentId = jest
+    mockCommentRepository.deleteCommentByCommentId = jest
       .fn()
       .mockImplementation(() => Promise.resolve());
 
     const deleteCommentUseCase = new DeleteCommentUseCase({
       threadRepository: mockThreadRepository,
       userRepository: mockUserRepository,
+      commentRepository: mockCommentRepository,
     });
 
     await deleteCommentUseCase.execute(useCaseParams, useCaseCredential);
@@ -53,13 +56,13 @@ describe("DeleteCommentUseCass", () => {
     expect(mockThreadRepository.verifyAvailableThreadId).toBeCalledWith(
       useCaseParams.threadId
     );
-    expect(mockThreadRepository.verifyAvailableCommentId).toBeCalledWith(
+    expect(mockCommentRepository.verifyAvailableCommentId).toBeCalledWith(
       useCaseParams.commentId
     );
-    expect(mockThreadRepository.verifyCommentOwner).toBeCalledWith(
+    expect(mockCommentRepository.verifyCommentOwner).toBeCalledWith(
       deleteCommentEntity
     );
-    expect(mockThreadRepository.deleteCommentByCommentId).toBeCalledWith(
+    expect(mockCommentRepository.deleteCommentByCommentId).toBeCalledWith(
       deleteCommentEntity
     );
   });
