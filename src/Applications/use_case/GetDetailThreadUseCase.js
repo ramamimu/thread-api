@@ -10,20 +10,7 @@ class GetDetailThreadUseCase {
       threadId
     );
     const thread = await this._threadRepository.getDetailThreadById(threadId);
-    return this.formatValue({ ...thread, comments });
-  }
-
-  formatValue(val) {
-    const { comments } = val;
-    let deletedContent = [];
-    let noDeletedContent = [];
-    comments.forEach((item) => {
-      if (item.content === "**komentar telah dihapus**")
-        deletedContent.push(item);
-      else noDeletedContent.push(item);
-    });
-
-    return { ...val, comments: [...noDeletedContent, ...deletedContent] };
+    return { ...thread, comments };
   }
 }
 

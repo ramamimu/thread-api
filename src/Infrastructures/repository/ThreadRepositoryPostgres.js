@@ -46,8 +46,8 @@ class ThreadRepositoryPostgress extends ThreadRepository {
     const id = `comment-${this._idGenerator()}`;
 
     const query = {
-      text: "INSERT INTO comments VALUES($1, $2, $3, $4) RETURNING *",
-      values: [id, threadId, content, owner],
+      text: "INSERT INTO comments VALUES($1, $2, $3, $4, $5) RETURNING *",
+      values: [id, threadId, content, owner, new Date()],
     };
 
     const result = await this._pool.query(query);
@@ -103,7 +103,7 @@ class ThreadRepositoryPostgress extends ThreadRepository {
 
   async getDetailCommentByThreadId(threadId) {
     const query = {
-      text: "SELECT a.id, a.content, a.date, a.is_delete, b.username FROM comments AS a JOIN users as b ON a.owner = b.id GROUP BY a.id, b.username HAVING a.thread_id = $1",
+      text: "SELECT a.id, a.content, a.date, a.is_delete, b.username FROM comments AS a JOIN users as b ON a.owner = b.id GROUP BY a.id, b.username HAVING a.thread_id = $1 ORDER BY a.date",
       values: [threadId],
     };
 
