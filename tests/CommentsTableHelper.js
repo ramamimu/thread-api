@@ -8,12 +8,13 @@ const CommentsTableHelper = {
     content = "a-content",
     threadId = "thread-comment-123",
     ownerId = "owner-thread-123",
+    isDelete = false,
     isAddThread = true,
   }) {
     if (isAddThread) await addThread({ id: threadId, ownerId });
     const query = {
-      text: "INSERT INTO comments VALUES ($1, $2, $3, $4)",
-      values: [id, threadId, content, ownerId],
+      text: "INSERT INTO comments(id, thread_id, content, owner, is_delete) VALUES ($1, $2, $3, $4, $5)",
+      values: [id, threadId, content, ownerId, isDelete],
     };
 
     await pool.query(query);

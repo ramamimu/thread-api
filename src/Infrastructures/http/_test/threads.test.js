@@ -402,4 +402,125 @@ describe("/threads endpoint", () => {
       expect(responseJSON.message).toBeDefined();
     });
   });
+
+  describe("when GET /threads/{threadId}", () => {
+    it("should response status code 200", async () => {
+      // arrange
+      const userPayload = {
+        id: "user-integration-test",
+        username: "username-int",
+      };
+
+      const threadPayload = {
+        id: "thread-integration-test",
+        ownerId: userPayload.id,
+        isAddUser: false,
+      };
+
+      const commentsPayload = [
+        {
+          id: "comment-int-1",
+          threadId: threadPayload.id,
+          ownerId: userPayload.id,
+          isAddThread: false,
+        },
+        {
+          id: "comment-int-2",
+          threadId: threadPayload.id,
+          ownerId: userPayload.id,
+          isAddThread: false,
+        },
+        {
+          id: "comment-int-3",
+          threadId: threadPayload.id,
+          ownerId: userPayload.id,
+          isAddThread: false,
+        },
+      ];
+
+      await UsersTableTestHelper.addUser(userPayload);
+      await ThreadTableTestHelper.addThread(threadPayload);
+      await CommentsTableHelper.addComments(commentsPayload[0]);
+      await CommentsTableHelper.addComments(commentsPayload[1]);
+      await CommentsTableHelper.addComments(commentsPayload[2]);
+
+      // action
+      const server = await createServer(container);
+      const responseNoDeletedComments = await server.inject({
+        method: "GET",
+        url: `/threads/${threadPayload.id}`,
+      });
+
+      const responseJson = JSON.parse(responseNoDeletedComments.payload);
+
+      expect(responseNoDeletedComments.statusCode).toEqual(200);
+      expect(responseJson.status).toStrictEqual("success");
+      expect(responseJson.data).toBeDefined();
+      expect(responseJson.data.thread).toBeDefined();
+      expect(responseJson.data.thread.id).toEqual(threadPayload.id);
+      expect(responseJson.data.thread.username).toEqual(userPayload.username);
+      expect(responseJson.data.thread.comments).toBeDefined();
+      expect(responseJson.data.thread.comments.length).toEqual(3);
+      expect(responseJson.data.thread.comments[0].content).not.toEqual(
+        "**komentar telah dihapus**"
+      );
+    });
+    it("should response status code 200 with deleted comments", async () => {
+      // arrange
+      const userPayload = {
+        id: "user-integration-test",
+        username: "username-int",
+      };
+
+      const threadPayload = {
+        id: "thread-integration-test",
+        ownerId: userPayload.id,
+        isAddUser: false,
+      };
+
+      const commentsPayload = [
+        {
+          id: "comment-int-4",
+          threadId: threadPayload.id,
+          ownerId: userPayload.id,
+          isDelete: true,
+          isAddThread: false,
+        },
+        {
+          id: "comment-int-5",
+          threadId: threadPayload.id,
+          ownerId: userPayload.id,
+          isDelete: true,
+          isAddThread: false,
+        },
+      ];
+
+      await UsersTableTestHelper.addUser(userPayload);
+      await ThreadTableTestHelper.addThread(threadPayload);
+      await CommentsTableHelper.addComments(commentsPayload[0]);
+      await CommentsTableHelper.addComments(commentsPayload[1]);
+
+      // action
+      const server = await createServer(container);
+      const responseNoDeletedComments = await server.inject({
+        method: "GET",
+        url: `/threads/${threadPayload.id}`,
+      });
+
+      const responseJson = JSON.parse(responseNoDeletedComments.payload);
+
+      expect(responseNoDeletedComments.statusCode).toEqual(200);
+      expect(responseJson.status).toStrictEqual("success");
+      expect(responseJson.data).toBeDefined();
+      expect(responseJson.data.thread).toBeDefined();
+      expect(responseJson.data.thread.id).toEqual(threadPayload.id);
+      expect(responseJson.data.thread.username).toEqual(userPayload.username);
+      expect(responseJson.data.thread.comments).toBeDefined();
+      expect(responseJson.data.thread.comments.length).toEqual(2);
+      expect(responseJson.data.thread.comments[0].content).toEqual(
+        "**komentar telah dihapus**"
+      );
+    });
+    it("should response status code 404 when thread is not available", async () => {});
+  });
 });
