@@ -8,8 +8,9 @@ const CommentsTableHelper = {
     content = "a-content",
     threadId = "thread-comment-123",
     ownerId = "owner-thread-123",
+    isAddThread = true,
   }) {
-    await addThread({ id: threadId, ownerId });
+    if (isAddThread) await addThread({ id: threadId, ownerId });
     const query = {
       text: "INSERT INTO comments VALUES ($1, $2, $3, $4)",
       values: [id, threadId, content, ownerId],

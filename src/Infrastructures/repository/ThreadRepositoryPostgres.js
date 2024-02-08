@@ -1,6 +1,9 @@
 const ThreadRepository = require("../../Domains/threads/ThreadRepository");
+
 const RegisteredThread = require("../../Domains/threads/entities/RegisteredThread");
 const RegisteredComment = require("../../Domains/threads/entities/RegisteredCommentEntity");
+const DetailThreadEntity = require("../../Domains/threads/entities/DetailThreadEntity");
+const DetailCommentEntity = require("../../Domains/threads/entities/DetailCommentEntity");
 
 const NotFoundError = require("../../Commons/exceptions/NotFoundError");
 const AuthorizationError = require("../../Commons/exceptions/AuthorizationError");
@@ -86,6 +89,27 @@ class ThreadRepositoryPostgress extends ThreadRepository {
     };
 
     await this._pool.query(query);
+  }
+
+  async getDetailThreadById(threadId) {
+    const query = {
+      text: "SELECT a.id,  a.title, a.body, a.date, b.username FROM threads as a JOIN users as b ON a.owner = b.id GROUP BY a.id, b.username HAVING a.id = $1",
+      values: [threadId],
+    };
+
+    const result = await this._pool.query(query);
+    return new DetailThreadEntity({ ...result.rows[0], comments: [] });
+  }
+
+  async getDetailCommentByThreadId(threadId) {
+    const query = {
+      text: "SELECT a.id, a.content, a.date, a.is_delete, b.username FROM comments AS a JOIN users as b ON a.owner = b.id GROUP BY a.id, b.username HAVING a.thread_id = $1",
+      values: [threadId],
+    };
+
+    const result = await this._pool.query(query);
+    const comments = result.rows.map((item) => new DetailCommentEntity(item));
+    return comments;
   }
 }
 

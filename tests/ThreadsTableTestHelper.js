@@ -9,8 +9,9 @@ const ThreadsTableHelper = {
     title = "a-title",
     body = "a-body",
     ownerId = "user-123",
+    isAddUser = true,
   }) {
-    await addUser({ id: ownerId });
+    if (isAddUser) await addUser({ id: ownerId });
     const query = {
       text: "INSERT INTO threads VALUES($1, $2, $3, $4)",
       values: [id, title, body, ownerId],

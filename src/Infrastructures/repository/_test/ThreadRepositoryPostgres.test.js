@@ -192,4 +192,58 @@ describe("ThreadRepositoryPostgres", () => {
       );
     });
   });
+
+  describe("getDetailThreadById", () => {
+    it("should return the object of Detail Tread Entity", async () => {
+      const payload = { id: "thread-available-123" };
+      await ThreadsTableTestHelper.addThread(payload);
+
+      const threadRepository = new ThreadRepositoryPostgres(pool, {});
+      const detailThread = await threadRepository.getDetailThreadById(
+        payload.id
+      );
+
+      expect(detailThread.id).toStrictEqual(payload.id);
+    });
+  });
+
+  describe("getDetailCommentByThreadId", () => {
+    it("should return comments of thread", async () => {
+      // arrange
+      /** add thread */
+      const threadPayload = {
+        id: "thread-available-123",
+        ownerId: "comment-owner",
+      };
+      await ThreadsTableTestHelper.addThread(threadPayload);
+
+      await CommentsTableHelper.addComments({
+        id: "comment-coba-1",
+        threadId: threadPayload.id,
+        ownerId: "comment-owner",
+        isAddThread: false,
+      });
+      await CommentsTableHelper.addComments({
+        id: "comment-coba-2",
+        threadId: threadPayload.id,
+        ownerId: "comment-owner",
+        isAddThread: false,
+      });
+      await CommentsTableHelper.addComments({
+        id: "comment-coba-3",
+        threadId: threadPayload.id,
+        ownerId: "comment-owner",
+        isAddThread: false,
+      });
+
+      // action
+      const threadRepository = new ThreadRepositoryPostgres(pool, {});
+      const comments = await threadRepository.getDetailCommentByThreadId(
+        threadPayload.id
+      );
+
+      // assert
+      expect(comments.length).toEqual(3);
+    });
+  });
 });

@@ -5,7 +5,7 @@ class ThreadRepository {
   async addCommentByThreadId(registerComment) {
     throw new Error("THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
-  async getDetailThread(threadId) {
+  async getDetailThreadById(threadId) {
     throw new Error("THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 }
