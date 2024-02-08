@@ -6,11 +6,8 @@ const pool = require("../../database/postgres/pool");
 const ThreadRepositoryPostgres = require("../ThreadRepositoryPostgres");
 
 const RegisterThreads = require("../../../Domains/threads/entities/RegisterThreadEntity");
-const RegisterComment = require("../../../Domains/threads/entities/RegisterCommentEntity");
-const DeleteCommentEntity = require("../../../Domains/threads/entities/DeleteCommentEntity");
 
 const NotFoundError = require("../../../Commons/exceptions/NotFoundError");
-const AuthorizationError = require("../../../Commons/exceptions/AuthorizationError");
 
 describe("ThreadRepositoryPostgres", () => {
   afterEach(async () => {

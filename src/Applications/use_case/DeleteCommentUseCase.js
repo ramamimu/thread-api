@@ -1,4 +1,4 @@
-const DeleteCommentEntity = require("../../Domains/threads/entities/DeleteCommentEntity");
+const DeleteCommentEntity = require("../../Domains/comments/entities/DeleteCommentEntity");
 
 class DeleteCommentUseCase {
   constructor({ threadRepository, userRepository, commentRepository }) {

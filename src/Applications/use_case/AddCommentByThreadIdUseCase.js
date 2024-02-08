@@ -1,4 +1,4 @@
-const RegisterComment = require("../../Domains/threads/entities/RegisterCommentEntity");
+const RegisterComment = require("../../Domains/comments/entities/RegisterCommentEntity");
 
 class AddCommentByThreadIdUseCase {
   constructor({ threadRepository, userRepository, commentRepository }) {

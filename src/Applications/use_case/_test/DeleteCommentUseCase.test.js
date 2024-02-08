@@ -4,7 +4,7 @@ const ThreadRepository = require("../../../Infrastructures/repository/ThreadRepo
 const UserRepository = require("../../../Infrastructures/repository/UserRepositoryPostgres");
 const CommentRepository = require("../../../Infrastructures/repository/CommentRepositoryPostgres");
 
-const DeleteCommentEntity = require("../../../Domains/threads/entities/DeleteCommentEntity");
+const DeleteCommentEntity = require("../../../Domains/comments/entities/DeleteCommentEntity");
 
 describe("DeleteCommentUseCass", () => {
   it("should orchestrating the delete of comment", async () => {

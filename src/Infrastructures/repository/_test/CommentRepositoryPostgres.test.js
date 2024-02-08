@@ -8,8 +8,8 @@ const CommentRepositoryPostgres = require("../CommentRepositoryPostgres");
 const NotFoundError = require("../../../Commons/exceptions/NotFoundError");
 const AuthorizationError = require("../../../Commons/exceptions/AuthorizationError");
 
-const RegisterComment = require("../../../Domains/threads/entities/RegisterCommentEntity");
-const DeleteCommentEntity = require("../../../Domains/threads/entities/DeleteCommentEntity");
+const RegisterComment = require("../../../Domains/comments/entities/RegisterCommentEntity");
+const DeleteCommentEntity = require("../../../Domains/comments/entities/DeleteCommentEntity");
 
 describe("CommentRepositoryPostgres", () => {
   afterEach(async () => {

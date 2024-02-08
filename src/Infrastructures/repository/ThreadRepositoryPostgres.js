@@ -1,12 +1,9 @@
 const ThreadRepository = require("../../Domains/threads/ThreadRepository");
 
 const RegisteredThread = require("../../Domains/threads/entities/RegisteredThread");
-const RegisteredComment = require("../../Domains/threads/entities/RegisteredCommentEntity");
 const DetailThreadEntity = require("../../Domains/threads/entities/DetailThreadEntity");
-const DetailCommentEntity = require("../../Domains/threads/entities/DetailCommentEntity");
 
 const NotFoundError = require("../../Commons/exceptions/NotFoundError");
-const AuthorizationError = require("../../Commons/exceptions/AuthorizationError");
 
 class ThreadRepositoryPostgress extends ThreadRepository {
   constructor(pool, idGenerator) {

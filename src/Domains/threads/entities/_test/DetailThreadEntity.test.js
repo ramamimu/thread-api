@@ -1,5 +1,5 @@
 const DetailThreadEntity = require("../DetailThreadEntity");
-const DetailCommentEntity = require("../DetailCommentEntity");
+const DetailCommentEntity = require("../../../comments/entities/DetailCommentEntity");
 
 describe("DetailThread Entity", () => {
   it("should return error when not contain needed property", () => {

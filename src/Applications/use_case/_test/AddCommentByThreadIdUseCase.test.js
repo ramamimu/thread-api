@@ -1,6 +1,6 @@
 const AddCommentByThreadIdUseCase = require("../AddCommentByThreadIdUseCase");
-const RegisterComment = require("../../../Domains/threads/entities/RegisterCommentEntity");
-const RegisteredComment = require("../../../Domains/threads/entities/RegisteredCommentEntity");
+const RegisterComment = require("../../../Domains/comments/entities/RegisterCommentEntity");
+const RegisteredComment = require("../../../Domains/comments/entities/RegisteredCommentEntity");
 
 const ThreadRepository = require("../../../Infrastructures/repository/ThreadRepositoryPostgres");
 const UserRepository = require("../../../Infrastructures/repository/UserRepositoryPostgres");
