@@ -56,6 +56,9 @@ describe("DeleteCommentUseCass", () => {
     expect(mockThreadRepository.verifyAvailableCommentId).toBeCalledWith(
       useCaseParams.commentId
     );
+    expect(mockThreadRepository.verifyCommentOwner).toBeCalledWith(
+      deleteCommentEntity
+    );
     expect(mockThreadRepository.deleteCommentByCommentId).toBeCalledWith(
       deleteCommentEntity
     );

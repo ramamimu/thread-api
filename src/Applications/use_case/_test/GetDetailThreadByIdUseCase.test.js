@@ -27,6 +27,12 @@ describe("GetDetailThreadById usecase", () => {
     expect(mockThreadRepository.verifyAvailableThreadId).toBeCalledWith(
       threadId
     );
+    expect(mockThreadRepository.verifyAvailableThreadId).toBeCalledWith(
+      threadId
+    );
+    expect(mockThreadRepository.getDetailCommentByThreadId).toBeCalledWith(
+      threadId
+    );
     expect(mockThreadRepository.getDetailThreadById).toBeCalledWith(threadId);
     expect(detailThread.id).toBeDefined();
     expect(detailThread.comments).toBeDefined();
