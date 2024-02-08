@@ -23,25 +23,27 @@ describe("ThreadRepositoryPostgres", () => {
   describe("addThread function", () => {
     it("should persist add thread and return added thread correctly", async () => {
       // arrange
-      await UsersTableTestHelper.addUser({ id: "user-thread-123" });
+      const ownerPayload = { id: "user-thread-123" };
+      const threadPayload = {
+        title: "a-title",
+        body: "a-body",
+      };
+      await UsersTableTestHelper.addUser(ownerPayload);
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(
         pool,
         () => "123"
       ); // mock
-      const registerThread = new RegisterThreads({
-        title: "a-title",
-        body: "a-body",
-      });
+      const registerThread = new RegisterThreads(threadPayload);
 
       // action
-      await threadRepositoryPostgres.addThread(
-        registerThread,
-        "user-thread-123"
-      );
+      await threadRepositoryPostgres.addThread(registerThread, ownerPayload.id);
 
       // assert
       const threads = await ThreadsTableTestHelper.findThreadById("thread-123");
       expect(threads).toHaveLength(1);
+      expect(threads[0].title).toEqual(threadPayload.title);
+      expect(threads[0].body).toEqual(threadPayload.body);
+      expect(threads[0].owner).toEqual(ownerPayload.id);
     });
   });
 
@@ -63,7 +65,12 @@ describe("ThreadRepositoryPostgres", () => {
 
   describe("getDetailThreadById", () => {
     it("should return the object of Detail Tread Entity", async () => {
-      const payload = { id: "thread-available-123" };
+      const payload = {
+        id: "thread-available-123",
+        title: "a-title",
+        body: "a-body",
+        ownerId: "an-owner",
+      };
       await ThreadsTableTestHelper.addThread(payload);
 
       const threadRepository = new ThreadRepositoryPostgres(pool, {});
@@ -72,6 +79,9 @@ describe("ThreadRepositoryPostgres", () => {
       );
 
       expect(detailThread.id).toStrictEqual(payload.id);
+      expect(detailThread.title).toStrictEqual(payload.title);
+      expect(detailThread.body).toStrictEqual(payload.body);
+      expect(detailThread.username).toStrictEqual("username-default");
     });
   });
 });

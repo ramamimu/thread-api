@@ -61,6 +61,8 @@ describe("DetailThread Entity", () => {
 
     expect(detailThreadEntity.id).toEqual(payloadThread.id);
     expect(detailThreadEntity.body).toEqual(payloadThread.body);
+    expect(detailThreadEntity.title).toEqual(payloadThread.title);
+    expect(detailThreadEntity.username).toEqual(payloadThread.username);
     expect(detailThreadEntity.date).toEqual(payloadThread.date);
     expect(detailThreadEntity.comments).toEqual(payloadThread.comments);
   });

@@ -106,6 +106,12 @@ describe("CommentRepositoryPostgres", () => {
       expect(() =>
         threadRepository.deleteCommentByCommentId(deleteCommentEntity)
       ).not.toThrow();
+
+      // retrieve comment data
+      const comment = await CommentsTableHelper.findCommentById(
+        payload.commentId
+      );
+      expect(comment.is_delete).toStrictEqual(true);
     });
   });
 

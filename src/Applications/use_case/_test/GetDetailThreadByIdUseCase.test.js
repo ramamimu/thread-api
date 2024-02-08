@@ -8,6 +8,21 @@ describe("GetDetailThreadById usecase", () => {
     // arrange
     const threadId = "thread-detail-123";
 
+    const mockDetailComment = {
+      id: "comment-123-id",
+      username: "a-uname",
+      date: {},
+      content: "an-content",
+    };
+
+    const mockDetailThread = {
+      id: threadId,
+      title: "sebuah thread",
+      body: "sebuah body thread",
+      date: {},
+      username: "dicoding",
+    };
+
     /** mocking dependencies for injection usecase class*/
     const mockThreadRepository = new ThreadRepository();
     const mockCommentRepository = new CommentRepository();
@@ -17,10 +32,10 @@ describe("GetDetailThreadById usecase", () => {
       .mockImplementation(() => Promise.resolve());
     mockCommentRepository.getDetailCommentByThreadId = jest
       .fn()
-      .mockImplementation(() => [{ id: "comment-123-id" }]);
+      .mockImplementation(() => Promise.resolve([mockDetailComment]));
     mockThreadRepository.getDetailThreadById = jest
       .fn()
-      .mockImplementation(() => ({ id: threadId }));
+      .mockImplementation(() => Promise.resolve(mockDetailThread));
 
     // action
     const getDetailThreadById = new GetDetailThreadById({
@@ -39,7 +54,6 @@ describe("GetDetailThreadById usecase", () => {
       threadId
     );
     expect(mockThreadRepository.getDetailThreadById).toBeCalledWith(threadId);
-    expect(detailThread.id).toBeDefined();
-    expect(detailThread.comments).toBeDefined();
+    expect(detailThread.comments.length).toEqual(1);
   });
 });

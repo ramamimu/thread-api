@@ -22,7 +22,7 @@ class AddCommentByThreadIdUseCase {
     );
     const RegisteredComment =
       await this._commentRepository.addCommentByThreadId(registerComment);
-    return RegisteredComment;
+    return RegisteredComment.getRespondRegisteredComment();
   }
 }
 

@@ -12,22 +12,22 @@ describe("AddCommentByThreadIdUseCase", () => {
     const useCasePayload = {
       content: "a-content-comment",
     };
-
     const useCaseParam = {
       id: "thread-comment-123",
     };
     const useCaseCredential = {
       id: "user-comment-123",
     };
+    const commentId = "comment-123";
 
-    const mockRegisterComment = new RegisterComment({
+    const registerComment = new RegisterComment({
       content: useCasePayload.content,
       threadId: useCaseParam.id,
       owner: useCaseCredential.id,
     });
 
     const mockRegisteredComment = new RegisteredComment({
-      id: "comment-123",
+      id: commentId,
       thread_id: useCaseParam.id,
       content: useCasePayload.content,
       date: {},
@@ -64,7 +64,9 @@ describe("AddCommentByThreadIdUseCase", () => {
     );
 
     // assert
-    expect(registeredComment).toStrictEqual(mockRegisteredComment);
+    expect(registeredComment.id).toEqual(commentId);
+    expect(registeredComment.content).toEqual(useCasePayload.content);
+    expect(registeredComment.owner).toEqual(useCaseCredential.id);
     expect(mockUserRepository.verifyAvailableUserId).toBeCalledWith(
       useCaseCredential.id
     );
@@ -72,7 +74,7 @@ describe("AddCommentByThreadIdUseCase", () => {
       useCaseParam.id
     );
     expect(mockCommentRepository.addCommentByThreadId).toBeCalledWith(
-      mockRegisterComment
+      registerComment
     );
   });
 });

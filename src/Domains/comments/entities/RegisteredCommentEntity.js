@@ -41,6 +41,14 @@ class RegisteredCommentEntity {
       );
     }
   }
+
+  getRespondRegisteredComment() {
+    return {
+      id: this.id,
+      content: this.content,
+      owner: this.owner,
+    };
+  }
 }
 
 module.exports = RegisteredCommentEntity;

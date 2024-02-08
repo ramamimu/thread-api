@@ -33,16 +33,11 @@ class ThreadsHandler {
       request.params,
       request.auth.credentials
     );
-    const { id, content, owner } = addedComment;
     return h
       .response({
         status: "success",
         data: {
-          addedComment: {
-            id,
-            content,
-            owner,
-          },
+          addedComment,
         },
       })
       .code(201);
