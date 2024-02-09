@@ -1,3 +1,6 @@
+const DetailThreadEntity = require("../../../Domains/threads/entities/DetailThreadEntity");
+const DetaiCommentEntity = require("../../../Domains/comments/entities/DetailCommentEntity");
+
 const GetDetailThreadById = require("../GetDetailThreadUseCase");
 
 const ThreadRepository = require("../../../Infrastructures/repository/ThreadRepositoryPostgres");
@@ -8,20 +11,22 @@ describe("GetDetailThreadById usecase", () => {
     // arrange
     const threadId = "thread-detail-123";
 
-    const mockDetailComment = {
+    const mockDetailComment = new DetaiCommentEntity({
       id: "comment-123-id",
       username: "a-uname",
       date: {},
       content: "an-content",
-    };
+      is_delete: false,
+    });
 
-    const mockDetailThread = {
+    const mockDetailThread = new DetailThreadEntity({
       id: threadId,
       title: "sebuah thread",
       body: "sebuah body thread",
       date: {},
       username: "dicoding",
-    };
+      comments: [mockDetailComment],
+    });
 
     /** mocking dependencies for injection usecase class*/
     const mockThreadRepository = new ThreadRepository();

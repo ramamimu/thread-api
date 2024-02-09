@@ -6,6 +6,7 @@ const UserRepository = require("../../../Infrastructures/repository/UserReposito
 
 describe("AddThreadUseCase", () => {
   it("should orchestrating the add thread action correctly", async () => {
+    const threadId = "thread-123";
     const useCasePayload = {
       title: "a-title",
       body: "a-body",
@@ -16,7 +17,7 @@ describe("AddThreadUseCase", () => {
     };
 
     const mockRegisteredThread = new RegisteredThread({
-      id: "thread-123",
+      id: threadId,
       title: useCasePayload.title,
       body: useCasePayload.body,
       owner: useCaseCredentials.id,
@@ -50,9 +51,9 @@ describe("AddThreadUseCase", () => {
 
     // assert
     expect(registeredThread).toStrictEqual({
-      id: mockRegisteredThread.id,
-      title: mockRegisteredThread.title,
-      owner: mockRegisteredThread.owner,
+      id: threadId,
+      title: useCasePayload.title,
+      owner: useCaseCredentials.id,
     });
 
     expect(mockUserRepository.verifyAvailableUserId).toBeCalledWith(
