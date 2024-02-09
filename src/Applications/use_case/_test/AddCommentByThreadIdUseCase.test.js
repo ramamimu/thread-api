@@ -64,6 +64,16 @@ describe("AddCommentByThreadIdUseCase", () => {
     );
 
     // assert
+    expect(registeredComment).toStrictEqual(
+      new RegisteredComment({
+        id: commentId,
+        thread_id: useCaseParam.id,
+        content: useCasePayload.content,
+        date: {},
+        is_delete: false,
+        owner: useCaseCredential.id,
+      }).getRespondRegisteredComment()
+    );
     expect(registeredComment.id).toEqual(commentId);
     expect(registeredComment.content).toEqual(useCasePayload.content);
     expect(registeredComment.owner).toEqual(useCaseCredential.id);

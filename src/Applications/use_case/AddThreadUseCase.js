@@ -15,13 +15,7 @@ class AddThreadUseCase {
       credentialId
     );
 
-    const addedThread = {
-      id: registeredThread.id,
-      title: registeredThread.title,
-      owner: registeredThread.owner,
-    };
-
-    return addedThread;
+    return registeredThread;
   }
 }
 

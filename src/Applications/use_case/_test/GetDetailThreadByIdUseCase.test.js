@@ -1,5 +1,5 @@
 const DetailThreadEntity = require("../../../Domains/threads/entities/DetailThreadEntity");
-const DetaiCommentEntity = require("../../../Domains/comments/entities/DetailCommentEntity");
+const DetailCommentEntity = require("../../../Domains/comments/entities/DetailCommentEntity");
 
 const GetDetailThreadById = require("../GetDetailThreadUseCase");
 
@@ -11,20 +11,26 @@ describe("GetDetailThreadById usecase", () => {
     // arrange
     const threadId = "thread-detail-123";
 
-    const mockDetailComment = new DetaiCommentEntity({
+    const detailCommentPayload = {
       id: "comment-123-id",
       username: "a-uname",
       date: {},
       content: "an-content",
       is_delete: false,
-    });
+    };
 
-    const mockDetailThread = new DetailThreadEntity({
+    const detailThreadPayload = {
       id: threadId,
       title: "sebuah thread",
       body: "sebuah body thread",
       date: {},
       username: "dicoding",
+      comments: [],
+    };
+
+    const mockDetailComment = new DetailCommentEntity(detailCommentPayload);
+    const mockDetailThread = new DetailThreadEntity({
+      ...detailThreadPayload,
       comments: [mockDetailComment],
     });
 
@@ -60,5 +66,11 @@ describe("GetDetailThreadById usecase", () => {
     );
     expect(mockThreadRepository.getDetailThreadById).toBeCalledWith(threadId);
     expect(detailThread.comments.length).toEqual(1);
+    expect(detailThread).toStrictEqual(
+      new DetailThreadEntity({
+        ...detailThreadPayload,
+        comments: [new DetailCommentEntity(detailCommentPayload)],
+      })
+    );
   });
 });

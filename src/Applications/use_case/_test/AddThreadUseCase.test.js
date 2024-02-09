@@ -50,11 +50,15 @@ describe("AddThreadUseCase", () => {
     );
 
     // assert
-    expect(registeredThread).toStrictEqual({
-      id: threadId,
-      title: useCasePayload.title,
-      owner: useCaseCredentials.id,
-    });
+    expect(registeredThread).toStrictEqual(
+      new RegisteredThread({
+        id: threadId,
+        title: useCasePayload.title,
+        body: useCasePayload.body,
+        owner: useCaseCredentials.id,
+        date: {},
+      })
+    );
 
     expect(mockUserRepository.verifyAvailableUserId).toBeCalledWith(
       useCaseCredentials.id
