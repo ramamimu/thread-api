@@ -1,0 +1,98 @@
+name: Continue Integration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  unit-test:
+    name: unit testing
+    env:
+      PGHOST: "localhost"
+      PGUSER: postgres
+      PGDATABASE: thread_db
+      PGPASSWORD: postgres
+      PGPORT: 5433
+
+      PGHOST_TEST: localhost
+      PGUSER_TEST: postgres
+      PGDATABASE_TEST: postgres
+      PGPASSWORD_TEST: postgres
+      PGPORT_TEST: 5434
+
+      ACCESS_TOKEN_KEY: 8b7b4ef375716ab08b2a3951b29d52fc00b1c855f9d1a847229b8c5935bef56d9d271e76a9cf08e614300395c3b90ebe559cf968a0741b18c9505549394b2c70
+      REFRESH_TOKEN_KEY: 5078605e074a462b1460608fcbe0d0963c644402e04ad334455ff5a856cb43fd99825861dde02957d5e3184c90c532ca7d0249df20fe93d535632f3d11be7bad
+      ACCCESS_TOKEN_AGE: 3000
+
+    runs-on: ubuntu-latest
+
+    services:
+      postgres-integration:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ${{ env.PGUSER }}
+          POSTGRES_PASSWORD: ${{ env.PGPASSWORD }}
+          POSTGRES_DB: ${{ env.PGDATABASE }}
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      postgres-test:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ${{ env.PGUSER_TEST }}
+          POSTGRES_PASSWORD: ${{ env.PGPASSWORD_TEST }}
+          POSTGRES_DB: ${{ env.PGDATABASE_TEST }}
+        ports:
+          - 5434:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: create env
+        run: |
+          touch .env
+
+          PGHOST=${{ env.PGHOST }}  >> .env
+          PGUSER=${{ env.PGUSER }} >> .env
+          PGDATABASE=${{ env.PGDATABASE }}  >> .env
+          PGPASSWORD=${{ env.PGPASSWORD }} >> .env
+          PGPORT=${{ env.PGPORT }} >> .env
+
+          PGHOST_TEST=${{ env.PGHOST_TEST }} >> .env
+          PGUSER_TEST=${{ env.PGUSER_TEST }}  >> .env
+          PGDATABASE_TEST=${{ env.PGDATABASE_TEST }}  >> .env
+          PGPASSWORD_TEST=${{ env.PGPASSWORD_TEST }}  >> .env
+          PGPORT_TEST=${{ env.PGPORT_TEST }}  >> .env
+
+          ACCESS_TOKEN_KEY=${{ secrets.ACCESS_TOKEN_KEY }} >> .env
+          REFRESH_TOKEN_KEY=${{ secrets.REFRESH_TOKEN_KEY}} >> .env
+          ACCCESS_TOKEN_AGE=${{secrets.ACCCESS_TOKEN_AGE}} >> .env
+
+      - name: set up Node.js 21
+        uses: actions/setup-node@v4
+        with:
+          node-version: "21"
+
+      - name: checkout code into the source code directory
+        uses: actions/checkout@v4
+
+      - run: npm install
+
+      - name: database migrate integration
+        run: npm run migrate up
+
+      - name: database migrate test
+        run: npm run migrate:test up
+
+      - name: test
+        run: npm run test
