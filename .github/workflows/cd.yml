@@ -18,4 +18,11 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PK_VM }}
           port: ${{ secrets.SSH_PORT }}
-          script: whoami
+          script: |
+            pm2 list
+            rm -rf thread-api
+            git clone https://github.com/ramamimu/thread-api.git thread-api
+            cp /home/ahm_f_ramadhani/.env thread-api/.env
+            cd thread-api
+            npm install --omit=dev
+            pm2 restart src/app.js --name node-service
