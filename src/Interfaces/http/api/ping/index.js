@@ -11,7 +11,7 @@ module.exports = {
           return h
             .response({
               status: "success",
-              message: "pong",
+              message: "ping and pong",
             })
             .code(200);
         },

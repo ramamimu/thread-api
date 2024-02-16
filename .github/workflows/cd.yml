@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    name: SSH using key
+    name: Build And Run
     runs-on: ubuntu-latest
     steps:
       - name: executing remote ssh commands using ssh key
@@ -25,4 +25,7 @@ jobs:
             cp /home/ahm_f_ramadhani/.env thread-api/.env
             cd thread-api
             npm install --omit=dev
-            pm2 restart src/app.js --name node-service
+            pwd
+            ls
+            pm2 stop app
+            pm2 start ./src/app.js
